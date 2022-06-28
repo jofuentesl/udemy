@@ -43,3 +43,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+#mis archicos
+/assets
+/main
+/_MACOSX
