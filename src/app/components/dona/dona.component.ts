@@ -19,7 +19,6 @@ export class DonaComponent {
     labels: this.doughnutChartLabels,
     datasets: [
       { data: [ 350, 450, 100 ] },
-      
     ]
   };
   public doughnutChartType: ChartType = 'doughnut';
