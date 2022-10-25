@@ -38,7 +38,7 @@ export class RegisterComponent {
       .subscribe( resp => {
         console.log('Usuario creado');
         console.log(resp);
-      }, (err)=> console.warn( err ));
+      }, (err)=> console.warn( err.error ));
   }
 
   campoNoValido( campo: string ):boolean {
