@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UsuarioService } from 'src/app/services/usuario.service';
 
 @Component({
   selector: 'app-register',
@@ -8,21 +9,76 @@ import { FormBuilder, Validators } from '@angular/forms';
 })
 export class RegisterComponent {
 
+
+  public formSubmitted = false;
+
   public resgisterForm = this.fb.group( { 
-    nombre: ['Jordi', [ Validators.required, Validators.minLength(3)]],
-    email: ['jordi@reprodisseny.com', [ Validators.required ]],
-    password: ['123456', [ Validators.required ]],
-    password2: ['123456', [ Validators.required ]],
+    nombre: ['', [ Validators.required, Validators.minLength(3)]],
+    email: ['', [ Validators.required, Validators.email ]],
+    password: ['', [ Validators.required ]],
+    password2: ['', [ Validators.required ]],
     terminos: [false, [ Validators.required ]],
+  }, {
+    validators: this.passwordsIguales('password','password2')
   })
   
   
-  constructor( private fb: FormBuilder) { }
+  constructor(  private fb: FormBuilder, 
+                private usuarioService: UsuarioService) { }
 
 
   createUser() {
-    console.log( this.resgisterForm.value );
+    this.formSubmitted = true;
+    if ( this.resgisterForm.invalid ) {
+      return;
+    }
+
+    //crear usuario
+    this.usuarioService.crearUsuario( this.resgisterForm.value )
+      .subscribe( resp => {
+        console.log('Usuario creado');
+        console.log(resp);
+      }, (err)=> console.warn( err ));
   }
 
+  campoNoValido( campo: string ):boolean {
+
+    if ( this.resgisterForm.get(campo)?.invalid && this.formSubmitted) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  contrasenasNoValidas() {
+    const pass1 = this.resgisterForm.get('password')?.value;
+    const pass2 = this.resgisterForm.get('password2')?.value;
+
+    if ( (pass1 !== pass2) && this.formSubmitted) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  aceptaTernimnos() {
+    return !this.resgisterForm.get('terminos')?.value && this.formSubmitted
+  }
+
+  passwordsIguales( pass1Name:string, pass2Name:string ) {
+
+    return ( formGroup:FormGroup ) => {
+
+      const pass1Control = formGroup.get(pass1Name);
+      const pass2Control = formGroup.get(pass2Name);
+
+      if( pass1Control?.value === pass2Control?.value ){
+        pass2Control?.setErrors(null);
+      } else {
+        pass2Control?.setErrors( {noEsIgual: true} );
+      }
+
+    }
+  }
  
 }
