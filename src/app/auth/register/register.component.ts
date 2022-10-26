@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
+
 import { UsuarioService } from 'src/app/services/usuario.service';
 
 @Component({
@@ -20,7 +22,7 @@ export class RegisterComponent {
     terminos: [false, [ Validators.required ]],
   }, {
     validators: this.passwordsIguales('password','password2')
-  })
+  });
   
   
   constructor(  private fb: FormBuilder, 
@@ -38,7 +40,10 @@ export class RegisterComponent {
       .subscribe( resp => {
         console.log('Usuario creado');
         console.log(resp);
-      }, (err)=> console.warn( err.error ));
+      }, (err)=> {
+        //si sucede error
+        Swal.fire('Error', err.error.msg, 'error');
+      });
   }
 
   campoNoValido( campo: string ):boolean {
