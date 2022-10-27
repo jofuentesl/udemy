@@ -1,23 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
 import { LoginForm } from '../../interfaces/login-form.interface';
 
+declare const google: any;
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: [ './login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit {
 
   public formSubmitted = false;
 
   public loginForm = this.fb.group( { 
   
-    email: ['Maria', [ Validators.required, Validators.email ]],
-    password: ['maria@gmail.com', [ Validators.required ]],
+    email: [ localStorage.getItem('email') || '', [ Validators.required, Validators.email ]],
+    password: ['', [ Validators.required ]],
     remember: [false]
   });
 
@@ -26,6 +28,32 @@ export class LoginComponent {
                 private usuarioService: UsuarioService ) { }
 
 
+  ngAfterViewInit(): void {
+    
+    this.googleInit();
+
+  } 
+  
+  googleInit() {
+
+    google.accounts.id.initialize({
+      client_id: "543773099021-sbec95774fbo9s14pmegjjtcnopfhapp.apps.googleusercontent.com",
+      callback: this.handleCredentialResponse
+    });
+    google.accounts.id.renderButton(
+      document.getElementById("buttonDiv"),
+      { theme: "outline", size: "large" }  // customization attributes
+    );
+    google.accounts.id.prompt();
+
+  }
+
+  handleCredentialResponse( response: any) {
+
+    console.log("Encoded JWT ID token: " + response.credential);
+
+  }
+
   login() {
     
     //console.log( this.loginForm.value );
@@ -33,7 +61,16 @@ export class LoginComponent {
     //this.router.navigateByUrl('/');
     this.usuarioService.login( this.loginForm.value as LoginForm )
     .subscribe({
-      next: resp => console.log(resp),
+      
+      next: (resp) => {
+        if( this.loginForm.get('remember')?.value ) {
+          
+          localStorage.setItem('email', this.loginForm.get('email')?.value as string )
+
+        } else {
+          localStorage.removeItem('email')
+        }
+      },
       error: (err) => {
          //si sucede error
          console.log(err);
