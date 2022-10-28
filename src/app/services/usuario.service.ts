@@ -35,6 +35,12 @@ export class UsuarioService {
                   localStorage.setItem('token', resp.token)
                 })
               )
-  
+  }
+
+  logingGoogle( token: string ) {
+
+    return this.http.post(`${ base_url }/login/google`, { token} )
+      
+
   }
 }
