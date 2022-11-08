@@ -32,7 +32,7 @@ export class UsuarioService {
     return this.http.post(`${ base_url }/login`, formData )
               .pipe(
                 tap( (resp: any) => {
-                  localStorage.setItem('token', resp.token)
+                  localStorage.setItem('token', resp.token);
                 })
               )
   }
