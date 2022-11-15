@@ -38,9 +38,8 @@ export class UsuarioService {
   }
 
   logingGoogle( token: string ) {
-
-    return this.http.post(`${ base_url }/login/google`, { token} )
-      
-
+    
+    return this.http.post(`${ base_url }/login/google`, { token } );
+    
   }
 }
