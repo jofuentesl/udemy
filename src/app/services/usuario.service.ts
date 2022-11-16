@@ -39,7 +39,12 @@ export class UsuarioService {
 
   logingGoogle( token: string ) {
     
-    return this.http.post(`${ base_url }/login/google`, { token } );
+    return this.http.post(`${ base_url }/login/google`, { token } )
+    .pipe(
+      tap((resp: any) => {
+        localStorage.setItem('token', resp.token);
+      })
+    )
     
   }
 }
