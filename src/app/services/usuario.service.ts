@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators'
@@ -19,7 +19,8 @@ declare const google: any;
 export class UsuarioService {
 
   constructor(  private http: HttpClient,
-                private router: Router ) { }
+                private router: Router,
+                private ngZone: NgZone ) { }
 
   //logout
   logout() {
@@ -27,8 +28,10 @@ export class UsuarioService {
     
     //borrar sesión si esta logeado con Google
     google.accounts.id.revoke('inimardi.reprodisseny@gmail.com', ()=> {
-      
-      this.router.navigateByUrl('/login');
+      this.ngZone.run(()=>{
+
+        this.router.navigateByUrl('/login');
+      })
     })
 
   }
@@ -51,7 +54,6 @@ export class UsuarioService {
   }
 
   crearUsuario (formData: RegisterForm) {
-    console.log('Creando usuario');
     
     return this.http.post(`${ base_url }/usuarios`, formData )
             .pipe(

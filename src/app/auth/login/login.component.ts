@@ -67,9 +67,6 @@ export class LoginComponent implements AfterViewInit {
 
   login() {
     
-    //console.log( this.loginForm.value );
-    
-    //this.router.navigateByUrl('/');
     this.usuarioService.login( this.loginForm.value as LoginForm )
     .subscribe({
       
