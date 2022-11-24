@@ -66,11 +66,13 @@ export class LoginComponent implements AfterViewInit {
   }
 
   login() {
+    console.log("hola");
     
     this.usuarioService.login( this.loginForm.value as LoginForm )
     .subscribe({
       
       next: (resp) => {
+        console.log(resp);
         if( this.loginForm.get('remember')?.value ) {
           
           localStorage.setItem('email', this.loginForm.get('email')?.value as string )

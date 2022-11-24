@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 
 import { LoginForm } from '../interfaces/login-form.interface';
 import { RegisterForm } from '../interfaces/register-form.interface';
+import { Usuario } from '../models/usuario.model';
 
 const base_url = environment.base_url; 
 
@@ -18,6 +19,8 @@ declare const google: any;
 })
 export class UsuarioService {
 
+  public usuarioDB!: Usuario;
+
   constructor(  private http: HttpClient,
                 private router: Router,
                 private ngZone: NgZone ) { }
@@ -28,10 +31,9 @@ export class UsuarioService {
     
     //borrar sesión si esta logeado con Google
     google.accounts.id.revoke('inimardi.reprodisseny@gmail.com', ()=> {
-      this.ngZone.run(()=>{
 
         this.router.navigateByUrl('/login');
-      })
+      
     })
 
   }
@@ -46,6 +48,17 @@ export class UsuarioService {
       }
     }).pipe(
       tap( (resp:any) => {
+        const {
+          email,
+          google,
+          nombre,
+          role,
+          img,
+          uid
+        } = resp.usuario;
+
+        this.usuarioDB = new Usuario( nombre, email, img, google, role, uid);
+        
         localStorage.setItem('token', resp.token );
       }),
       map( resp => true ),

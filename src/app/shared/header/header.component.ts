@@ -10,7 +10,6 @@ import { UsuarioService } from 'src/app/services/usuario.service';
 export class HeaderComponent  {
 
   constructor( private usuarioService: UsuarioService ) { }
-
   
 
   logout() {
